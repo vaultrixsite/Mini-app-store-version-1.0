@@ -262,17 +262,6 @@
         </div>
     </div>
 
-    <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center space-x-3 bg-slate-900 dark:bg-slate-800 text-white px-5 py-3 rounded-2xl shadow-2xl border border-slate-800 dark:border-slate-700">
-        <div id="toastIcon" class="text-emerald-400 text-lg">
-            <i class="fa-solid fa-circle-check"></i>
-        </div>
-        <div>
-            <h5 id="toastTitle" class="font-semibold text-sm">सफल!</h5>
-            <p id="toastMsg" class="text-xs text-slate-400">यह एक्शन सफलतापूर्वक पूरा हुआ।</p>
-        </div>
-    </div>
-
     <!-- JavaScript Logic -->
     <script>
         const defaultApps = [
@@ -417,7 +406,6 @@
                 renderApps();
                 updateStats();
                 closeAppModal();
-                showToast('डिलीट सफल!', `"${app.name}" को स्टोर से हमेशा के लिए हटा दिया गया है।`, 'info');
             }
         }
 
@@ -482,11 +470,9 @@
             document.getElementById('appModal').classList.add('hidden');
         }
 
-        // Yahan ab koi link ya naya page nahi khulega, bas modal close hoga aur button click work karega
+        // Yahan ab koi toast ya naya page nahi khulega, bas button click work karega
         function launchGame(appId) {
-            const app = apps.find(a => a.id === appId);
             closeAppModal();
-            showToast('क्लिक सफल! ✅', `"${app ? app.name : 'Game'}" का बटन दबाया गया।`, 'success');
         }
 
         function openFeaturedGame() {
@@ -528,8 +514,6 @@
             document.getElementById('uploadForm').reset();
             document.getElementById('iconPreview').innerHTML = '<i class="fa-solid fa-image text-slate-400"></i>';
             switchTab('store');
-
-            showToast('बधाई हो! 🎉', `${name} स्टोर पर सफलतापूर्वक पब्लिश हो गया है।`, 'success');
         }
 
         function previewThumbnail(url) {
@@ -547,17 +531,6 @@
             if (textEl) {
                 textEl.innerText = `${count} गेम्स कुल उपलब्ध हैं`;
             }
-        }
-
-        function showToast(title, msg, type = 'success') {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastTitle').innerText = title;
-            document.getElementById('toastMsg').innerText = msg;
-
-            toast.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3500);
         }
 
         function toggleTheme() {
