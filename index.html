@@ -45,14 +45,12 @@
             border-radius: 4px;
         }
         
-        /* Custom Marquee Spacing & Styling CSS */
         .header-marquee-box {
             background: linear-gradient(90deg, #4f46e5, #7c3aed);
             color: #ffffff;
             padding: 8px 16px;
             font-size: 14px;
             font-weight: 500;
-            /* Yahi se niche box mein spacing/margin set hoti hai */
             margin-bottom: 24px; 
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
@@ -101,14 +99,14 @@
             </div>
         </div>
 
-        <!-- Yahan Header ke andar Marquee Joda gaya hai -->
+        <!-- Marquee -->
         <div class="header-marquee-box">
             <div class="max-w-7xl mx-auto flex items-center">
                 <span class="bg-white/20 text-white text-xs px-2 py-0.5 rounded mr-3 font-bold uppercase tracking-wider flex-shrink-0">
                     <i class="fa-solid fa-bullhorn mr-1"></i> अपडेट
                 </span>
                 <marquee behavior="scroll" direction="left" scrollamount="5">
-                     *Disclaimer: This is a student learning project strictly not for any commercial use.*
+                    🚀 MiniStore Portal v2.1 लाइव हो गया है! अपने खुद के कस्टम गेम्स अपलोड करें और एन्जॉय करें। 🎮
                 </marquee>
             </div>
         </div>
@@ -233,11 +231,6 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">प्लेबल गेम/ऐप URL (Game Web Link) *</label>
-                        <input type="url" id="appGameUrl" required placeholder="https://... (यहाँ अपने गेम या वेबसाइट का लिंक दें)" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    </div>
-
-                    <div>
                         <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">शॉर्ट विवरण (Short Description) *</label>
                         <input type="text" id="appShortDesc" required maxlength="120" placeholder="एक लाइन में गेम की खासियत बताएं..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     </div>
@@ -290,7 +283,6 @@
                 developer: 'CyberStudios',
                 version: '1.2.4',
                 icon: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&auto=format&fit=crop&q=80',
-                gameUrl: 'https://poki.com/en/g/neon-rider',
                 shortDesc: 'तेज रफ्तार साइबरपैक रेसिंग गेम जिसमें आपको बाधाओं से बचना है।',
                 fullDesc: 'Neon Rider 3D एक हाई-स्पीड फ्यूचरिस्टिक रेसिंग गेम है। इसमें शानदार ग्राफिक्स और स्मूथ कंट्रोल्स दिए गए हैं।',
                 downloads: '14.2K',
@@ -311,7 +303,7 @@
         });
 
         function loadAppsFromStorage() {
-            const stored = localStorage.getItem('ministore_apps_v2');
+            const stored = localStorage.getItem('ministore_apps_v4');
             if (stored) {
                 try {
                     apps = JSON.parse(stored);
@@ -325,7 +317,7 @@
         }
 
         function saveAppsToStorage() {
-            localStorage.setItem('ministore_apps_v2', JSON.stringify(apps));
+            localStorage.setItem('ministore_apps_v4', JSON.stringify(apps));
         }
 
         function switchTab(tabName) {
@@ -405,8 +397,7 @@
                             <button onclick="openAppModal('${app.id}')" class="flex-1 py-2.5 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition text-center">
                                 विवरण
                             </button>
-                            <!-- UPDATED: Opens game in a NEW TAB -->
-                            <button onclick="launchGame('${app.gameUrl}')" class="flex-1 py-2.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs transition shadow-sm text-center flex items-center justify-center space-x-1">
+                            <button onclick="launchGame('${app.id}')" class="flex-1 py-2.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs transition shadow-sm text-center flex items-center justify-center space-x-1">
                                 <i class="fa-solid fa-play"></i>
                                 <span>खेलें</span>
                             </button>
@@ -416,12 +407,11 @@
             `).join('');
         }
 
-        // Delete App Function (Permanent Delete)
         function deleteApp(appId) {
             const app = apps.find(a => a.id === appId);
             if (!app) return;
 
-            if (confirm(`क्या आप वाकई "${app.name}" को इस ऐप स्टोर से हमेशा के लिए डिलीट (उड़ाना) चाहते हैं?`)) {
+            if (confirm(`क्या आप वाकई "${app.name}" को इस ऐप स्टोर से हमेशा के लिए डिलीट करना चाहते हैं?`)) {
                 apps = apps.filter(a => a.id !== appId);
                 saveAppsToStorage();
                 renderApps();
@@ -473,10 +463,8 @@
                     <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">${app.fullDesc}</p>
                 </div>
 
-                <!-- Footer Actions with Delete Button inside Modal -->
                 <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
-                    <!-- UPDATED: Opens game in a NEW TAB -->
-                    <button onclick="launchGame('${app.gameUrl}')" class="flex-1 py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+                    <button onclick="launchGame('${app.id}')" class="flex-1 py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
                         <i class="fa-solid fa-play"></i>
                         <span>गेम खेलें (Play Now)</span>
                     </button>
@@ -494,15 +482,16 @@
             document.getElementById('appModal').classList.add('hidden');
         }
 
-        // UPDATED: Opens the game URL in a NEW TAB directly
-        function launchGame(gameUrl) {
+        // Yahan ab koi link ya naya page nahi khulega, bas modal close hoga aur button click work karega
+        function launchGame(appId) {
+            const app = apps.find(a => a.id === appId);
             closeAppModal();
-            window.open(gameUrl, '_blank');
+            showToast('क्लिक सफल! ✅', `"${app ? app.name : 'Game'}" का बटन दबाया गया।`, 'success');
         }
 
         function openFeaturedGame() {
             if (apps.length > 0) {
-                launchGame(apps[0].gameUrl);
+                launchGame(apps[0].id);
             }
         }
 
@@ -514,7 +503,6 @@
             const developer = document.getElementById('appDeveloper').value.trim();
             const version = document.getElementById('appVersion').value.trim() || '1.0.0';
             const icon = document.getElementById('appIcon').value.trim();
-            const gameUrl = document.getElementById('appGameUrl').value.trim();
             const shortDesc = document.getElementById('appShortDesc').value.trim();
             const fullDesc = document.getElementById('appFullDesc').value.trim() || shortDesc;
 
@@ -525,7 +513,6 @@
                 developer,
                 version,
                 icon,
-                gameUrl,
                 shortDesc,
                 fullDesc,
                 downloads: '10+',
