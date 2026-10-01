@@ -44,6 +44,18 @@
             background: #334155;
             border-radius: 4px;
         }
+        
+        /* Custom Marquee Spacing & Styling CSS */
+        .header-marquee-box {
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            color: #ffffff;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            /* Yahi se niche box mein spacing/margin set hoti hai */
+            margin-bottom: 24px; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col transition-colors duration-300">
@@ -86,6 +98,18 @@
                 <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="टॉगल थीम">
                     <i id="theme-icon" class="fa-solid fa-moon"></i>
                 </button>
+            </div>
+        </div>
+
+        <!-- Yahan Header ke andar Marquee Joda gaya hai -->
+        <div class="header-marquee-box">
+            <div class="max-w-7xl mx-auto flex items-center">
+                <span class="bg-white/20 text-white text-xs px-2 py-0.5 rounded mr-3 font-bold uppercase tracking-wider flex-shrink-0">
+                    <i class="fa-solid fa-bullhorn mr-1"></i> अपडेट
+                </span>
+                <marquee behavior="scroll" direction="left" scrollamount="5">
+                    🚀 MiniStore Portal v2.1 लाइव हो गया है! नए एक्साइटिंग गेम्स अपलोड करें और दोस्तों के साथ शेयर करें। 🎮
+                </marquee>
             </div>
         </div>
     </header>
