@@ -1,554 +1,616 @@
 <!DOCTYPE html>
 <html lang="hi" class="h-full">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MiniStore - App Store & Game Portal</title>
-<!-- Tailwind CSS CDN -->
-<script src="https://cdn.tailwindcss.com"></script>
-<!-- FontAwesome for Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- Google Fonts Inter -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<!-- Supabase JS Client Library (API calling ke liye zaroori library) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-tailwind.config = {
-darkMode: 'class',
-theme: {
-extend: {
-fontFamily: {
-sans: ['Inter', 'sans-serif'],
-},
-}
-}
-}
-</script>
-<style>
-body { font-family: 'Inter', sans-serif; }
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-.dark ::-webkit-scrollbar-track { background: #0f172a; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-.dark ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-.header-marquee-box {
-background: linear-gradient(90deg, #4f46e5, #7c3aed);
-color: #ffffff; padding: 8px 16px; font-size: 14px; font-weight: 500; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniStore - App Store & Game Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Supabase JS Client Library (API calling ke liye zaroori library) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        .dark ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .header-marquee-box {
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            color: #ffffff; padding: 8px 16px; font-size: 14px; font-weight: 500; margin-bottom: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-full flex flex-col transition-colors duration-300">
 
-<!-- Navigation Header -->
-<header class="sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-<div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('store')">
-<div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
-<i class="fa-solid fa-gamepad text-xl"></i>
-</div>
-<div>
-<span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent">MiniStore</span>
-<span class="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">Portal v2.1</span>
-</div>
-</div>
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('store')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-gamepad text-xl"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-500 bg-clip-text text-transparent">MiniStore</span>
+                    <span class="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">Portal v2.1</span>
+                </div>
+            </div>
 
-<div id="nav-search-container" class="hidden md:flex flex-1 max-w-md mx-8">
-<div class="relative w-full">
-<span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
-<i class="fa-solid fa-magnifying-glass"></i>
-</span>
-<input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="गेम्स या ऐप्स खोजें (Search games or apps)..." class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800/80 border border-transparent dark:border-slate-700 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition">
-</div>
-</div>
+            <div id="nav-search-container" class="hidden md:flex flex-1 max-w-md mx-8">
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="गेम्स या ऐप्स खोजें (Search games or apps)..." class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800/80 border border-transparent dark:border-slate-700 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-900 transition">
+                </div>
+            </div>
 
-<div class="flex items-center space-x-3">
-<button onclick="switchTab('store')" id="btn-store" class="px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-indigo-600 text-white shadow-sm">
-<i class="fa-solid fa-store"></i>
-<span>स्टोर (Store)</span>
-</button>
-<button onclick="switchTab('upload')" id="btn-upload" class="px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
-<i class="fa-solid fa-cloud-arrow-up"></i>
-<span>गेम अपलोड करें</span>
-</button>
-<button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="टॉगल थीम">
-<i id="theme-icon" class="fa-solid fa-moon"></i>
-</button>
-</div>
-</div>
+            <div class="flex items-center space-x-3">
+                <button onclick="switchTab('store')" id="btn-store" class="px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-indigo-600 text-white shadow-sm">
+                    <i class="fa-solid fa-store"></i>
+                    <span>स्टोर (Store)</span>
+                </button>
+                <button onclick="switchTab('upload')" id="btn-upload" class="px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <span>गेम अपलोड करें</span>
+                </button>
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="टॉगल थीम">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
 
-<div class="header-marquee-box">
-<div class="max-w-7xl mx-auto flex items-center">
-<span class="bg-white/20 text-white text-xs px-2 py-0.5 rounded mr-3 font-bold uppercase tracking-wider flex-shrink-0">
-<i class="fa-solid fa-bullhorn mr-1"></i> अपडेट
-</span>
-<marquee behavior="scroll" direction="left" scrollamount="5">
-Supabase Cloud Database Connected! Live API requests active for fetching and uploading games.
-</marquee>
-</div>
-</div>
-</header>
+        <div class="header-marquee-box">
+            <div class="max-w-7xl mx-auto flex items-center">
+                <span class="bg-white/20 text-white text-xs px-2 py-0.5 rounded mr-3 font-bold uppercase tracking-wider flex-shrink-0">
+                    <i class="fa-solid fa-bullhorn mr-1"></i> अपडेट
+                </span>
+                <marquee behavior="scroll" direction="left" scrollamount="5">
+                    *GitHub Pages / Static Deployment Safe Mode Active! Supabase or LocalStorage auto-fallback enabled.*
+                </marquee>
+            </div>
+        </div>
+    </header>
 
-<!-- Main Content Area -->
-<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-<!-- STORE TAB -->
-<div id="tab-store" class="space-y-8">
-<div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-violet-900 to-purple-900 text-white p-8 md:p-12 shadow-xl">
-<div class="absolute -right-12 -bottom-12 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-<div class="relative z-10 max-w-2xl space-y-4">
-<span class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-indigo-200">
-<i class="fa-solid fa-bolt text-amber-400"></i>
-<span>फीचर्ड गेम</span>
-</span>
-<h1 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">Neon Rider 3D - स्पीड और थ्रिल</h1>
-<p class="text-slate-300 text-sm md:text-base">साइबरपैक सिटी में तेज रफ्तार रेसिंग का मज़ा लें। अभी इंस्टॉल करें और खेलें!</p>
-<div class="flex flex-wrap gap-3 pt-2">
-<button onclick="openFeaturedGame()" class="px-6 py-3 bg-white text-indigo-900 rounded-xl font-bold hover:bg-indigo-50 transition shadow-lg flex items-center space-x-2">
-<i class="fa-solid fa-play text-indigo-600"></i>
-<span>तुरंत खेलें</span>
-</button>
-<button onclick="switchTab('upload')" class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl font-semibold transition backdrop-blur-md">
-अपना गेम अपलोड करें
-</button>
-</div>
-</div>
-</div>
+        <!-- STORE TAB -->
+        <div id="tab-store" class="space-y-8">
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900 via-violet-900 to-purple-900 text-white p-8 md:p-12 shadow-xl">
+                <div class="absolute -right-12 -bottom-12 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-white/10 backdrop-blur-md border border-white/20 text-indigo-200">
+                        <i class="fa-solid fa-bolt text-amber-400"></i>
+                        <span>फीचर्ड गेम</span>
+                    </span>
+                    <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">Neon Rider 3D - स्पीड और थ्रिल</h1>
+                    <p class="text-slate-300 text-sm md:text-base">साइबरपैक सिटी में तेज रफ्तार रेसिंग का मज़ा लें। अभी इंस्टॉल करें और खेलें!</p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button onclick="openFeaturedGame()" class="px-6 py-3 bg-white text-indigo-900 rounded-xl font-bold hover:bg-indigo-50 transition shadow-lg flex items-center space-x-2">
+                            <i class="fa-solid fa-play text-indigo-600"></i>
+                            <span>तुरंत खेलें</span>
+                        </button>
+                        <button onclick="switchTab('upload')" class="px-6 py-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-xl font-semibold transition backdrop-blur-md">
+                            अपना गेम अपलोड करें
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-<!-- Categories Filter -->
-<div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none" id="categoryFilters">
-<button onclick="filterCategory('All')" class="category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-indigo-600 text-white shadow-sm whitespace-nowrap">सभी (All)</button>
-<button onclick="filterCategory('Action')" class="category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 whitespace-nowrap">एक्शन (Action)</button>
-<button onclick="filterCategory('Puzzle')" class="category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 whitespace-nowrap">पहेली (Puzzle)</button>
-<button onclick="filterCategory('Arcade')" class="category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 whitespace-nowrap">आर्केड (Arcade)</button>
-<button onclick="filterCategory('Utility')" class="category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 whitespace-nowrap">यूटिलिटी (Utility)</button>
-</div>
+            <!-- Categories Filter -->
+            <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none" id="categoryFilters">
+                <button onclick="filterCategory('All')" class="category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-indigo-600 text-white shadow-sm whitespace-nowrap">सभी (All)</button>
+                <button onclick="filterCategory('Action')" class="category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 whitespace-nowrap">एक्शन (Action)</button>
+                <button onclick="filterCategory('Puzzle')" class="category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 whitespace-nowrap">पहेली (Puzzle)</button>
+                <button onclick="filterCategory('Arcade')" class="category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 whitespace-nowrap">आर्केड (Arcade)</button>
+                <button onclick="filterCategory('Utility')" class="category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 whitespace-nowrap">यूटिलिटी (Utility)</button>
+            </div>
 
-<div class="flex justify-between items-center">
-<h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center space-x-2">
-<i class="fa-solid fa-fire text-amber-500"></i>
-<span id="sectionTitle">सभी गेम्स और ऐप्स</span>
-<span id="appCountBadge" class="text-xs bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded-full text-slate-600 dark:text-slate-400">0</span>
-</h2>
-<div class="text-sm text-slate-500 dark:text-slate-400">
-<span id="installedCountText">0 ऐप्स उपलब्ध हैं</span>
-</div>
-</div>
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100 flex items-center space-x-2">
+                    <i class="fa-solid fa-fire text-amber-500"></i>
+                    <span id="sectionTitle">सभी गेम्स और ऐप्स</span>
+                    <span id="appCountBadge" class="text-xs bg-slate-200 dark:bg-slate-800 px-2 py-0.5 rounded-full text-slate-600 dark:text-slate-400">0</span>
+                </h2>
+                <div class="text-sm text-slate-500 dark:text-slate-400">
+                    <span id="installedCountText">0 ऐप्स उपलब्ध हैं</span>
+                </div>
+            </div>
 
-<!-- Apps Grid -->
-<div id="appsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+            <!-- Apps Grid -->
+            <div id="appsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
 
-<div id="emptyState" class="hidden flex flex-col items-center justify-center py-16 text-center">
-<div class="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 text-3xl mb-4">
-<i class="fa-solid fa-box-open"></i>
-</div>
-<h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">कोई गेम नहीं मिला</h3>
-<p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mt-1">स्टोर खाली है या कोई गेम इस नाम से नहीं है। नया गेम अपलोड करें!</p>
-<button onclick="switchTab('upload')" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium shadow hover:bg-indigo-700 transition">
-गेम अपलोड करें
-</button>
-</div>
-</div>
+            <div id="emptyState" class="hidden flex flex-col items-center justify-center py-16 text-center">
+                <div class="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 text-3xl mb-4">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">कोई गेम नहीं मिला</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 max-w-sm mt-1">स्टोर खाली है या कोई गेम इस नाम से नहीं है। नया गेम अपलोड करें!</p>
+                <button onclick="switchTab('upload')" class="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-medium shadow hover:bg-indigo-700 transition">
+                    गेम अपलोड करें
+                </button>
+            </div>
+        </div>
 
-<!-- UPLOAD TAB -->
-<div id="tab-upload" class="hidden max-w-3xl mx-auto space-y-6">
-<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
-<div class="flex items-center space-x-4 mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
-<div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-2xl font-bold">
-<i class="fa-solid fa-cloud-arrow-up"></i>
-</div>
-<div>
-<h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">डेलिवपर पोर्टल: नया गेम/ऐप अपलोड करें</h2>
-<p class="text-sm text-slate-500 dark:text-slate-400">अपनी ऐप डिटेल्स भरें और इसे तुरंत Supabase क्लाउड पर लाइव करें।</p>
-</div>
-</div>
+        <!-- UPLOAD TAB -->
+        <div id="tab-upload" class="hidden max-w-3xl mx-auto space-y-6">
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
+                <div class="flex items-center space-x-4 mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-2xl font-bold">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-slate-100">डेलिवपर पोर्टल: नया गेम/ऐप अपलोड करें</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">अपनी ऐप डिटेल्स भरें और इसे तुरंत स्टोर पर लाइव करें।</p>
+                    </div>
+                </div>
 
-<form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-5">
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-<div>
-<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">गेम / ऐप का नाम *</label>
-<input type="text" id="appName" required placeholder="उदा. Space Adventure 3D" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-</div>
-<div>
-<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">श्रेणी (Category) *</label>
-<select id="appCategory" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-<option value="Action">एक्शन (Action)</option>
-<option value="Puzzle">पहेली (Puzzle)</option>
-<option value="Arcade">आर्केड (Arcade)</option>
-<option value="Utility">यूटिलिटी (Utility)</option>
-</select>
-</div>
-</div>
+                <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">गेम / ऐप का नाम *</label>
+                            <input type="text" id="appName" required placeholder="उदा. Space Adventure 3D" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">श्रेणी (Category) *</label>
+                            <select id="appCategory" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                <option value="Action">एक्शन (Action)</option>
+                                <option value="Puzzle">पहेली (Puzzle)</option>
+                                <option value="Arcade">आर्केड (Arcade)</option>
+                                <option value="Utility">यूटिलिटी (Utility)</option>
+                            </select>
+                        </div>
+                    </div>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-<div>
-<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">डेलिवपर / क्रिएटर का नाम *</label>
-<input type="text" id="appDeveloper" required placeholder="उदा. Rajesh Studio" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-</div>
-<div>
-<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">वर्जन (Version)</label>
-<input type="text" id="appVersion" value="1.0.0" placeholder="1.0.0" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-</div>
-</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">डेलिवपर / क्रिएटर का नाम *</label>
+                            <input type="text" id="appDeveloper" required placeholder="उदा. Rajesh Studio" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">वर्जन (Version)</label>
+                            <input type="text" id="appVersion" value="1.0.0" placeholder="1.0.0" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                    </div>
 
-<div>
-<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">ऐप आइकॉन इमेज URL (Thumbnail URL) *</label>
-<div class="flex space-x-3">
-<input type="url" id="appIcon" required placeholder="https://images.unsplash.com/... या कोई इमेज लिंक" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none" oninput="previewThumbnail(this.value)">
-<div id="iconPreview" class="w-11 h-11 rounded-xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden flex-shrink-0 border border-slate-300 dark:border-slate-600">
-<i class="fa-solid fa-image text-slate-400"></i>
-</div>
-</div>
-</div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">ऐप आइकॉन इमेज URL (Thumbnail URL) *</label>
+                        <div class="flex space-x-3">
+                            <input type="url" id="appIcon" required placeholder="https://images.unsplash.com/... या कोई इमेज लिंक" class="flex-1 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none" oninput="previewThumbnail(this.value)">
+                            <div id="iconPreview" class="w-11 h-11 rounded-xl bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden flex-shrink-0 border border-slate-300 dark:border-slate-600">
+                                <i class="fa-solid fa-image text-slate-400"></i>
+                            </div>
+                        </div>
+                    </div>
 
-<div>
-<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">शॉर्ट विवरण (Short Description) *</label>
-<input type="text" id="appShortDesc" required maxlength="120" placeholder="एक लाइन में गेम की खासियत बताएं..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-</div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">शॉर्ट विवरण (Short Description) *</label>
+                        <input type="text" id="appShortDesc" required maxlength="120" placeholder="एक लाइन में गेम की खासियत बताएं..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
 
-<div>
-<label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">विस्तृत विवरण (Full Description)</label>
-<textarea id="appFullDesc" rows="4" placeholder="गेम के रूल्स और कंट्रोल्स के बारे में विस्तार से लिखें..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
-</div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">विस्तृत विवरण (Full Description)</label>
+                        <textarea id="appFullDesc" rows="4" placeholder="गेम के रूल्स और कंट्रोल्स के बारे में विस्तार से लिखें..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                    </div>
 
-<div class="pt-4 flex items-center justify-end space-x-3">
-<button type="button" onclick="switchTab('store')" class="px-5 py-2.5 rounded-xl text-sm font-medium border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-रद्द करें
-</button>
-<button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2">
-<i class="fa-solid fa-cloud-arrow-up"></i>
-<span>गेम स्टोर पर प्रकाशित करें</span>
-</button>
-</div>
-</form>
-</div>
-</div>
+                    <div class="pt-4 flex items-center justify-end space-x-3">
+                        <button type="button" onclick="switchTab('store')" class="px-5 py-2.5 rounded-xl text-sm font-medium border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                            रद्द करें
+                        </button>
+                        <button type="submit" class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>गेम स्टोर पर प्रकाशित करें</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-</main>
+    </main>
 
-<!-- MODAL -->
-<div id="appModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-<div id="modalContentBox" class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 transform transition-all"></div>
-</div>
+    <!-- MODAL -->
+    <div id="appModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div id="modalContentBox" class="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 transform transition-all"></div>
+    </div>
 
-<!-- JavaScript & Supabase API Calling Code -->
-<script>
-// ==========================================
-// 1. SUPABASE CREDENTIALS & CLIENT SETUP
-// ==========================================
-const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+    <!-- CUSTOM NOTIFICATION MODAL (Replaces alert/confirm) -->
+    <div id="customModal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-center space-y-4">
+            <div id="modalIcon" class="w-12 h-12 rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400 flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-circle-info"></i>
+            </div>
+            <h3 id="modalTitle" class="text-lg font-bold text-slate-900 dark:text-slate-100">सूचनार्थ</h3>
+            <p id="modalMessage" class="text-sm text-slate-600 dark:text-slate-300">संदेश यहाँ दिखाई देगा...</p>
+            <div id="modalButtons" class="flex space-x-3 pt-2">
+                <button onclick="closeCustomModal(true)" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition">ठीक है</button>
+            </div>
+        </div>
+    </div>
 
-let supabaseClient = null;
-try {
-if (window.supabase && SUPABASE_URL !== 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co') {
-supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
-} catch (e) {
-console.error('Supabase initialization error:', e);
-}
+    <script>
+        // ==========================================
+        // 1. SUPABASE CREDENTIALS & SAFE CLIENT SETUP
+        // ==========================================
+        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
 
-const defaultApps = [
-{
-id: 'app-1',
-name: 'Neon Rider 3D',
-category: 'Action',
-developer: 'CyberStudios',
-version: '1.2.4',
-icon: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&auto=format&fit=crop&q=80',
-shortDesc: 'तेज रफ्तार साइबरपैक रेसिंग गेम जिसमें आपको बाधाओं से बचना है।',
-fullDesc: 'Neon Rider 3D एक हाई-स्पीड फ्यूचरिस्टिक रेसिंग गेम है। इसमें शानदार ग्राफिक्स और स्मूथ कंट्रोल्स दिए गए हैं।',
-downloads: '14.2K',
-rating: '4.8',
-installed: true
-}
- ];
+        let supabaseClient = null;
+        try {
+            if (window.supabase && SUPABASE_URL !== 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co' && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY_HERE') {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch (e) {
+            console.log('Running in static / offline fallback mode.');
+        }
 
-let apps = [];
-let currentTab = 'store';
-let currentCategory = 'All';
-let searchQuery = '';
+        const defaultApps = [
+            {
+                id: 'app-1',
+                name: 'Neon Rider 3D',
+                category: 'Action',
+                developer: 'CyberStudios',
+                version: '1.2.4',
+                icon: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&auto=format&fit=crop&q=80',
+                shortDesc: 'तेज रफ्तार साइबरपैक रेसिंग गेम जिसमें आपको बाधाओं से बचना है।',
+                fullDesc: 'Neon Rider 3D एक हाई-स्पीड फ्यूचरिस्टिक रेसिंग गेम है। इसमें शानदार ग्राफिक्स और स्मूथ कंट्रोल्स दिए गए हैं।',
+                downloads: '14.2K',
+                rating: '4.8',
+                installed: true
+            }
+        ];
 
-document.addEventListener('DOMContentLoaded', () => {
-loadGames();
-});
+        let apps = [];
+        let currentTab = 'store';
+        let currentCategory = 'All';
+        let searchQuery = '';
+        let modalCallback = null;
 
-// ==========================================
-// 2. FETCH GAMES API CALL (Data Mangwana)
-// ==========================================
-async function loadGames() {
-if (supabaseClient) {
-try {
-// API Call: Supabase table 'apps' se sara data fetch kar rahe hain
-const { data, error } = await supabaseClient
-.from('apps')
-.select('*')
-.order('created_at', { ascending: false });
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGames();
+        });
 
-if (error) {
-console.error('Supabase fetch error, using local storage:', error);
-loadAppsFromStorage();
-} else if (data && data.length > 0) {
-apps = data;
-} else {
-apps = defaultApps;
-}
-} catch (err) {
-console.error('Network error during fetch:', err);
-loadAppsFromStorage();
-}
-} else {
-loadAppsFromStorage();
-}
+        // ==========================================
+        // 2. FETCH GAMES API CALL (Data Mangwana)
+        // ==========================================
+        async function loadGames() {
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('apps')
+                        .select('*')
+                        .order('created_at', { ascending: false });
 
-renderApps();
-updateStats();
-}
+                    if (error) {
+                        loadAppsFromStorage();
+                    } else if (data && data.length > 0) {
+                        apps = data;
+                    } else {
+                        apps = defaultApps;
+                    }
+                } catch (err) {
+                    loadAppsFromStorage();
+                }
+            } else {
+                loadAppsFromStorage();
+            }
 
-function loadAppsFromStorage() {
-const stored = localStorage.getItem('ministore_apps_v4');
-if (stored) {
-try { apps = JSON.parse(stored); } catch (e) { apps = defaultApps; }
-} else {
-apps = defaultApps;
-saveAppsToStorage();
-}
-}
+            renderApps();
+            updateStats();
+        }
 
-function saveAppsToStorage() {
-localStorage.setItem('ministore_apps_v4', JSON.stringify(apps));
-}
+        function loadAppsFromStorage() {
+            const stored = localStorage.getItem('ministore_apps_v5');
+            if (stored) {
+                try { apps = JSON.parse(stored); } catch (e) { apps = defaultApps; }
+            } else {
+                apps = defaultApps;
+                saveAppsToStorage();
+            }
+        }
 
-// ==========================================
-// 3. INSERT GAME API CALL (Naya Game Upload)
-// ==========================================
-async function handleUploadSubmit(event) {
-event.preventDefault();
+        function saveAppsToStorage() {
+            localStorage.setItem('ministore_apps_v5', JSON.stringify(apps));
+        }
 
-const name = document.getElementById('appName').value.trim();
-const category = document.getElementById('appCategory').value;
-const developer = document.getElementById('appDeveloper').value.trim();
-const version = document.getElementById('appVersion').value.trim() || '1.0.0';
-const icon = document.getElementById('appIcon').value.trim();
-const shortDesc = document.getElementById('appShortDesc').value.trim();
-const fullDesc = document.getElementById('appFullDesc').value.trim() || shortDesc;
+        // ==========================================
+        // 3. INSERT GAME API CALL (Naya Game Upload)
+        // ==========================================
+        async function handleUploadSubmit(event) {
+            event.preventDefault();
 
-const newApp = {
-id: 'app-' + Date.now(),
-name,
-category,
-developer,
-version,
-icon,
-shortDesc,
-fullDesc,
-downloads: '10+',
-rating: '5.0',
-installed: true
-};
+            const name = document.getElementById('appName').value.trim();
+            const category = document.getElementById('appCategory').value;
+            const developer = document.getElementById('appDeveloper').value.trim();
+            const version = document.getElementById('appVersion').value.trim() || '1.0.0';
+            const icon = document.getElementById('appIcon').value.trim();
+            const shortDesc = document.getElementById('appShortDesc').value.trim();
+            const fullDesc = document.getElementById('appFullDesc').value.trim() || shortDesc;
 
-if (supabaseClient) {
-try {
-// API Call: Supabase table 'apps' mein naya record insert kar rahe hain
-const { error } = await supabaseClient
-.from('apps')
-.insert([newApp]);
+            const newApp = {
+                id: 'app-' + Date.now(),
+                name,
+                category,
+                developer,
+                version,
+                icon,
+                shortDesc,
+                fullDesc,
+                downloads: '10+',
+                rating: '5.0',
+                installed: true
+            };
 
-if (error) {
-console.error('Supabase insert error:', error);
-}
-} catch (err) {
-console.error('Error inserting into Supabase:', err);
-}
-}
+            if (supabaseClient) {
+                try {
+                    await supabaseClient.from('apps').insert([newApp]);
+                } catch (err) {
+                    console.log('Cloud sync skipped, saved locally.');
+                }
+            }
 
-apps.unshift(newApp);
-saveAppsToStorage();
-renderApps();
-updateStats();
+            apps.unshift(newApp);
+            saveAppsToStorage();
+            renderApps();
+            updateStats();
 
-document.getElementById('uploadForm').reset();
-document.getElementById('iconPreview').innerHTML = '<i class="fa-solid fa-image text-slate-400"></i>';
-switchTab('store');
-}
+            document.getElementById('uploadForm').reset();
+            document.getElementById('iconPreview').innerHTML = '<i class="fa-solid fa-image text-slate-400"></i>';
+            switchTab('store');
+            showCustomModal('सफलता', 'आपका गेम सफलतापूर्वक स्टोर पर प्रकाशित हो गया है!');
+        }
 
-// ==========================================
-// 4. DELETE GAME API CALL (Game Hatana)
-// ==========================================
-async function deleteApp(appId) {
-const app = apps.find(a => a.id === appId);
-if (!app) return;
+        // ==========================================
+        // 4. DELETE GAME API CALL (Game Hatana)
+        // ==========================================
+        async function deleteApp(appId) {
+            const app = apps.find(a => a.id === appId);
+            if (!app) return;
 
-if (confirm(क्या आप वाकई "${app.name}" को हमेशा के लिए डिलीट करना चाहते हैं?`)) {
-if (supabaseClient) {
-try {
-// API Call: Supabase database se specific ID wale row ko delete kar rahe hain
-await supabaseClient.from('apps').delete().eq('id', appId);
-} catch (e) {
-console.error('Supabase delete error:', e);
-}
-}
-apps = apps.filter(a => a.id !== appId);
-saveAppsToStorage();
-renderApps();
-updateStats();
-closeAppModal();
-}
-}
+            showConfirmModal('डिलीट कन्फर्मेशन', `क्या आप वाकई "${app.name}" को हमेशा के लिए डिलीट करना चाहते हैं?`, async () => {
+                if (supabaseClient) {
+                    try {
+                        await supabaseClient.from('apps').delete().eq('id', appId);
+                    } catch (e) {
+                        console.log('Cloud delete skipped.');
+                    }
+                }
+                apps = apps.filter(a => a.id !== appId);
+                saveAppsToStorage();
+                renderApps();
+                updateStats();
+                closeAppModal();
+            });
+        }
 
-// UI Helpers & Render Functions
-function switchTab(tabName) {
-currentTab = tabName;
-const storeTab = document.getElementById('tab-store');
-const uploadTab = document.getElementById('tab-upload');
-const btnStore = document.getElementById('btn-store');
-const btnUpload = document.getElementById('btn-upload');
-const searchContainer = document.getElementById('nav-search-container');
+        // UI Helpers & Render Functions
+        function switchTab(tabName) {
+            currentTab = tabName;
+            const storeTab = document.getElementById('tab-store');
+            const uploadTab = document.getElementById('tab-upload');
+            const btnStore = document.getElementById('btn-store');
+            const btnUpload = document.getElementById('btn-upload');
+            const searchContainer = document.getElementById('nav-search-container');
 
-if (tabName === 'store') {
-storeTab.classList.remove('hidden');
-uploadTab.classList.add('hidden');
-searchContainer.classList.remove('hidden');
-btnStore.className = "px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-indigo-600 text-white shadow-sm";
-btnUpload.className = "px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700";
-} else {
-storeTab.classList.add('hidden');
-uploadTab.classList.remove('hidden');
-searchContainer.classList.add('hidden');
-btnUpload.className = "px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-indigo-600 text-white shadow-sm";
-btnStore.className = "px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700";
-}
-}
+            if (tabName === 'store') {
+                storeTab.classList.remove('hidden');
+                uploadTab.classList.add('hidden');
+                searchContainer.classList.remove('hidden');
+                btnStore.className = "px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-indigo-600 text-white shadow-sm";
+                btnUpload.className = "px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700";
+            } else {
+                storeTab.classList.add('hidden');
+                uploadTab.classList.remove('hidden');
+                searchContainer.classList.add('hidden');
+                btnUpload.className = "px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-indigo-600 text-white shadow-sm";
+                btnStore.className = "px-4 py-2 rounded-full text-sm font-medium transition flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700";
+            }
+        }
 
-function renderApps() {
-const grid = document.getElementById('appsGrid');
-const emptyState = document.getElementById('emptyState');
-const sectionTitle = document.getElementById('sectionTitle');
-const appCountBadge = document.getElementById('appCountBadge');
+        function renderApps() {
+            const grid = document.getElementById('appsGrid');
+            const emptyState = document.getElementById('emptyState');
+            const sectionTitle = document.getElementById('sectionTitle');
+            const appCountBadge = document.getElementById('appCountBadge');
 
-let filtered = apps.filter(app => {
-const matchesCategory = currentCategory === 'All' || app.category === currentCategory;
-const matchesSearch = app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-app.developer.toLowerCase().includes(searchQuery.toLowerCase());
-return matchesCategory && matchesSearch;
-});
+            let filtered = apps.filter(app => {
+                const matchesCategory = currentCategory === 'All' || app.category === currentCategory;
+                const matchesSearch = app.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                      app.developer.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
 
-appCountBadge.innerText = filtered.length;
-sectionTitle.innerText = currentCategory === 'All' ? 'सभी गेम्स और ऐप्स' : ``${currentCategory} गेम्स`;
+            appCountBadge.innerText = filtered.length;
+            sectionTitle.innerText = currentCategory === 'All' ? 'सभी गेम्स और ऐप्स' : `${currentCategory} गेम्स`;
 
-if (filtered.length === 0) {
-grid.innerHTML = '';
-emptyState.classList.remove('hidden');
-return;
-}
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
 
-emptyState.classList.add('hidden');
-grid.innerHTML = filtered.map(app => &lt;div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"&gt; &lt;div&gt; &lt;div class="flex items-start justify-between mb-4"&gt; &lt;img src="${app.icon}" alt="${app.name}" onerror="this.src='https://placehold.co/100x100/6366f1/ffffff?text=APP'" class="w-16 h-16 rounded-2xl object-cover shadow-md group-hover:scale-105 transition duration-300"&gt; &lt;span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400"&gt; ${app.category}
-</span>
-</div>
-<h3 onclick="openAppModal('${app.id}')" class="font-bold text-lg text-slate-900 dark:text-slate-100 cursor-pointer hover:text-indigo-600 transition line-clamp-1"&gt;${app.name}</h3>
-<p class="text-xs text-slate-500 dark:text-slate-400 mb-2">द्वारा ${app.developer}&lt;/p&gt; &lt;p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 mb-4"&gt;${app.shortDesc}</p>
-</div>
-<div>
-<div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-3 pt-3 border-t border-slate-100 dark:border-slate-800">
-<span class="flex items-center space-x-1">
-<i class="fa-solid fa-star text-amber-400"></i>
-<span class="font-semibold text-slate-700 dark:text-slate-300">${app.rating}&lt;/span&gt; &lt;/span&gt; &lt;button onclick="deleteApp('${app.id}')" class="text-rose-500 hover:text-rose-700 dark:hover:text-rose-400 p-1.5 rounded-lg transition" title="डिलीट करें">
-<i class="fa-solid fa-trash-can text-sm"></i>
-</button>
-</div>
-<div class="flex items-center space-x-2">
-<button onclick="openAppModal('${app.id}')" class="flex-1 py-2.5 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition text-center"&gt; विवरण &lt;/button&gt; &lt;button onclick="launchGame('${app.id}')" class="flex-1 py-2.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs transition shadow-sm text-center flex items-center justify-center space-x-1">
-<i class="fa-solid fa-play"></i>
-<span>खेलें</span>
-</button>
-</div>
-</div>
-</div>
-`).join('');
-}
+            emptyState.classList.add('hidden');
+            grid.innerHTML = filtered.map(app => `
+                <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-start justify-between mb-4">
+                            <img src="${app.icon}" alt="${app.name}" onerror="this.src='https://placehold.co/100x100/6366f1/ffffff?text=APP'" class="w-16 h-16 rounded-2xl object-cover shadow-md group-hover:scale-105 transition duration-300">
+                            <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400">
+                                ${app.category}
+                            </span>
+                        </div>
+                        <h3 onclick="openAppModal('${app.id}')" class="font-bold text-lg text-slate-900 dark:text-slate-100 cursor-pointer hover:text-indigo-600 transition line-clamp-1">${app.name}</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mb-2">द्वारा ${app.developer}</p>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 mb-4">${app.shortDesc}</p>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                            <span class="flex items-center space-x-1">
+                                <i class="fa-solid fa-star text-amber-400"></i>
+                                <span class="font-semibold text-slate-700 dark:text-slate-300">${app.rating}</span>
+                            </span>
+                            <button onclick="deleteApp('${app.id}')" class="text-rose-500 hover:text-rose-700 dark:hover:text-rose-400 p-1.5 rounded-lg transition" title="डिलीट करें">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="openAppModal('${app.id}')" class="flex-1 py-2.5 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs transition text-center">
+                                विवरण
+                            </button>
+                            <button onclick="launchGame('${app.id}')" class="flex-1 py-2.5 px-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs transition shadow-sm text-center flex items-center justify-center space-x-1">
+                                <i class="fa-solid fa-play"></i>
+                                <span>खेलें</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-function filterCategory(cat) {
-currentCategory = cat;
-document.querySelectorAll('.category-btn').forEach(btn => {
-if (btn.innerText.includes(cat) || (cat === 'All' && btn.innerText.includes('सभी'))) {
-btn.className = "category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-indigo-600 text-white shadow-sm whitespace-nowrap";
-} else {
-btn.className = "category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 whitespace-nowrap";
-}
-});
-renderApps();
-}
+        function filterCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.innerText.includes(cat) || (cat === 'All' && btn.innerText.includes('सभी'))) {
+                    btn.className = "category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-indigo-600 text-white shadow-sm whitespace-nowrap";
+                } else {
+                    btn.className = "category-btn px-4 py-2 rounded-full text-sm font-semibold transition bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 whitespace-nowrap";
+                }
+            });
+            renderApps();
+        }
 
-function handleSearch(val) {
-searchQuery = val;
-renderApps();
-}
+        function handleSearch(val) {
+            searchQuery = val;
+            renderApps();
+        }
 
-function openAppModal(appId) {
-const app = apps.find(a => a.id === appId);
-if (!app) return;
+        function openAppModal(appId) {
+            const app = apps.find(a => a.id === appId);
+            if (!app) return;
 
-const modalBox = document.getElementById('modalContentBox');
-modalBox.innerHTML = &lt;div class="flex items-start justify-between mb-6"&gt; &lt;div class="flex items-center space-x-4"&gt; &lt;img src="${app.icon}" onerror="this.src='https://placehold.co/100x100/6366f1/ffffff?text=APP'" class="w-20 h-20 rounded-2xl object-cover shadow-lg">
-<div>
-<span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400"> {app.name}</h2>
-<p class="text-xs text-slate-500">डेलिवपर: <span class="font-medium text-slate-700 dark:text-slate-300"> {app.version}</p>
-</div>
-</div>
-<button onclick="closeAppModal()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 transition">
-<i class="fa-solid fa-xmark"></i>
-</button>
-</div>
-<div class="space-y-3 mb-6">
-<h4 class="font-bold text-sm text-slate-900 dark:text-slate-100">ऐप के बारे में</h4>
-<p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"> {app.id}')" class="flex-1 py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
-<i class="fa-solid fa-play"></i>
-<span>गेम खेलें (Play Now)</span>
-</button>
-<button onclick="deleteApp('${app.id}')" class="py-3 px-5 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-600 dark:text-rose-400 font-semibold rounded-xl transition flex items-center space-x-1.5"&gt; &lt;i class="fa-solid fa-trash-can"&gt;&lt;/i&gt; &lt;span&gt;डिलीट करें&lt;/span&gt; &lt;/button&gt; &lt;/div&gt;;
-document.getElementById('appModal').classList.remove('hidden');
-}
+            const modalBox = document.getElementById('modalContentBox');
+            modalBox.innerHTML = `
+                <div class="flex items-start justify-between mb-6">
+                    <div class="flex items-center space-x-4">
+                        <img src="${app.icon}" onerror="this.src='https://placehold.co/100x100/6366f1/ffffff?text=APP'" class="w-20 h-20 rounded-2xl object-cover shadow-lg">
+                        <div>
+                            <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">${app.category}</span>
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">${app.name}</h2>
+                            <p class="text-xs text-slate-500">डेलिवपर: <span class="font-medium text-slate-700 dark:text-slate-300">${app.developer}</span> • वर्जन ${app.version}</p>
+                        </div>
+                    </div>
+                    <button onclick="closeAppModal()" class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="space-y-3 mb-6">
+                    <h4 class="font-bold text-sm text-slate-900 dark:text-slate-100">ऐप के बारे में</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">${app.fullDesc}</p>
+                </div>
+                <div class="flex items-center space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <button onclick="launchGame('${app.id}')" class="flex-1 py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-play"></i>
+                        <span>गेम खेलें (Play Now)</span>
+                    </button>
+                    <button onclick="deleteApp('${app.id}')" class="py-3 px-5 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 text-rose-600 dark:text-rose-400 font-semibold rounded-xl transition flex items-center space-x-1.5">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>डिलीट करें</span>
+                    </button>
+                </div>
+            `;
+            document.getElementById('appModal').classList.remove('hidden');
+        }
 
-function closeAppModal() {
-document.getElementById('appModal').classList.add('hidden');
-}
+        function closeAppModal() {
+            document.getElementById('appModal').classList.add('hidden');
+        }
 
-function launchGame(appId) { closeAppModal(); }
-function openFeaturedGame() { if (apps.length > 0) launchGame(apps[0].id); }
+        function launchGame(appId) {
+            closeAppModal();
+            showCustomModal('लॉन्च', 'यह गेम अभी GitHub Pages पर लाइव डेमो मोड में चल रहा है!');
+        }
 
-function previewThumbnail(url) {
-const previewBox = document.getElementById('iconPreview');
-if (url && url.startsWith('http')) {
-previewBox.innerHTML = <img src="${url}" onerror="this.src='https://placehold.co/100x100/6366f1/ffffff?text=ERROR'" class="w-full h-full object-cover">`;
-} else {
-previewBox.innerHTML = '<i class="fa-solid fa-image text-slate-400"></i>';
-}
-}
+        function openFeaturedGame() {
+            if (apps.length > 0) launchGame(apps[0].id);
+        }
 
-function updateStats() {
-const count = apps.length;
-const textEl = document.getElementById('installedCountText');
-if (textEl) textEl.innerText = ${count} गेम्स कुल उपलब्ध हैं;
-}
+        function previewThumbnail(url) {
+            const previewBox = document.getElementById('iconPreview');
+            if (url && url.startsWith('http')) {
+                previewBox.innerHTML = `<img src="${url}" onerror="this.src='https://placehold.co/100x100/6366f1/ffffff?text=ERROR'" class="w-full h-full object-cover">`;
+            } else {
+                previewBox.innerHTML = '<i class="fa-solid fa-image text-slate-400"></i>';
+            }
+        }
 
-function toggleTheme() {
-const html = document.documentElement;
-const themeIcon = document.getElementById('theme-icon');
-if (html.classList.contains('dark')) {
-html.classList.remove('dark');
-themeIcon.className = "fa-solid fa-moon";
-localStorage.setItem('ministore_theme', 'light');
-} else {
-html.classList.add('dark');
-themeIcon.className = "fa-solid fa-sun";
-localStorage.setItem('ministore_theme', 'dark');
-}
-}
+        function updateStats() {
+            const count = apps.length;
+            const textEl = document.getElementById('installedCountText');
+            if (textEl) textEl.innerText = `${count} गेम्स कुल उपलब्ध हैं`;
+        }
 
-if (localStorage.getItem('ministore_theme') === 'dark' || (!localStorage.getItem('ministore_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-document.documentElement.classList.add('dark');
-document.getElementById('theme-icon').className = "fa-solid fa-sun";
-}
-</script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                themeIcon.className = "fa-solid fa-moon";
+                localStorage.setItem('ministore_theme', 'light');
+            } else {
+                html.classList.add('dark');
+                themeIcon.className = "fa-solid fa-sun";
+                localStorage.setItem('ministore_theme', 'dark');
+            }
+        }
+
+        function showCustomModal(title, msg) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = msg;
+            document.getElementById('modalButtons').innerHTML = `<button onclick="closeCustomModal(true)" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-sm transition">ठीक है</button>`;
+            document.getElementById('customModal').classList.remove('hidden');
+        }
+
+        function showConfirmModal(title, msg, onConfirm) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMessage').innerText = msg;
+            modalCallback = onConfirm;
+            document.getElementById('modalButtons').innerHTML = `
+                <button onclick="closeCustomModal(false)" class="flex-1 py-2.5 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-700 dark:text-slate-300 font-semibold rounded-xl text-sm transition">रद्द करें</button>
+                <button onclick="executeConfirm()" class="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-semibold rounded-xl text-sm transition">हाँ, डिलीट करें</button>
+            `;
+            document.getElementById('customModal').classList.remove('hidden');
+        }
+
+        function closeCustomModal(isOk) {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+
+        function executeConfirm() {
+            document.getElementById('customModal').classList.add('hidden');
+            if (modalCallback) {
+                modalCallback();
+                modalCallback = null;
+            }
+        }
+
+        if (localStorage.getItem('ministore_theme') === 'dark' || (!localStorage.getItem('ministore_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.getElementById('theme-icon').className = "fa-solid fa-sun";
+        }
+    </script>
 </body>
-    </html>
+</html>
